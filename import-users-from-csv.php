@@ -231,6 +231,7 @@ class IS_IU_Import_Users {
 		include( plugin_dir_path( __FILE__ ) . 'class-readcsv.php' );
 
 		// Loop through the file lines
+		self::changeEndOfLineFromCRToLF($filename);    // プラグインで解決できなかったため拡張。この行を消せば初期状態に戻る。
 		$file_handle = fopen( $filename, 'r' );
 		$csv_reader = new ReadCSV( $file_handle, IS_IU_CSV_DELIMITER, "\xEF\xBB\xBF" ); // Skip any UTF-8 byte order mark.
 
@@ -368,6 +369,14 @@ class IS_IU_Import_Users {
 		}
 
 		@fclose( $log );
+	}
+	// 改行コードをCRLF,CRからLFに変える
+	public function changeEndOfLineFromCRToLF($filename)
+	{
+		$current = file_get_contents($filename);
+		$current = preg_replace("/\r\n|\r|\n/", "\n", $current);
+		file_put_contents($filename, $current);
+		return $fileName;
 	}
 }
 
